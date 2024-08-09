@@ -27,7 +27,6 @@
   }
 
   function getFileUrl(filePath) {
-    
     const normalizedPath = filePath.replace(/^\/+/, ''); // Удаляем начальные слэши
     console.log(`${baseUrl}/${normalizedPath}`);
     return `${baseUrl}/${normalizedPath}`;
@@ -88,7 +87,7 @@
     } catch (error) {
         console.error("Ошибка соединения:", error);
     }
-}
+  }
 
   /**
   * @param {any} id
@@ -159,7 +158,6 @@
       <h2 class="text-xl font-bold mb-2">
         <a href={`/boards/${boardId}/threads/${thread.threadId}`} class="text-blue-500 underline">{thread.title}</a>
       </h2>
-      <h2 class="text-xl font-bold mb-2">{thread.title}</h2>
       <p class="text-gray-700 mb-4">{thread.content}</p>
       {#if thread.filePath}
         <p class="text-sm text-gray-500 mb-4">
@@ -171,6 +169,7 @@
         </p>
       {/if}
       <div class="text-sm text-gray-600 mb-4">Автор: {thread.userId}</div>
+      <div class="text-sm text-gray-600 mb-4">Дата: {thread.createdAt}</div>
       <div class="flex space-x-2">
         <button on:click={() => updateThread(thread.threadId, thread.title, thread.content)} class="bg-green-500 text-white p-2 rounded">Обновить</button>
         <button on:click={() => deleteThread(thread.threadId)} class="bg-red-500 text-white p-2 rounded">Удалить</button>
