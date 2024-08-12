@@ -1,76 +1,38 @@
 <script>
 // @ts-nocheck
 
-  import {onMount} from 'svelte';
-  import { page } from '$app/stores'; 
+  import { onMount } from 'svelte';
+
+  import { page } from '$app/stores';
+  import ThreadForm from '../../ThreadComponents/ThreadForm.svelte';
+  import ThreadItem from '../../ThreadComponents/ThreadItem.svelte';
 
   const baseUrl = 'http://localhost:9000';
-
-  let name = "2ch app";
   let API_URL = "http://localhost:8080/";
 
-  /**
-  * @type {any[]}
-  */
-  let threads =[];
-  let newThreadName ='';
-  let newThreadDescription = '';
-  let newThreadFile;
+  let threads = [];
 
   let boardId;
 
-  $: boardId = $page.url.pathname.split('/')[2];  
+  $: boardId = $page.url.pathname.split('/')[2];
 
-  function isImage(filePath) {
+  async function isImage(filePath) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
     return imageExtensions.some(ext => filePath.endsWith(ext));
   }
 
   function getFileUrl(filePath) {
-    const normalizedPath = filePath.replace(/^\/+/, ''); // Удаляем начальные слэши
-    console.log(`${baseUrl}/${normalizedPath}`);
-    return `${baseUrl}/${normalizedPath}`;
+    const normalizedPath = filePath.replace(/^\/+/, ''); 
+    return (`${baseUrl}/${normalizedPath}`);
   }
 
-  async function initializeUser() {
-    try {
-      const response = await fetch(`${API_URL}api/AnonymousUser`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        
-      } else {
-        console.error("Ошибка инициализации пользователя:", response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error("Ошибка соединения:", error);
-    }
-  }
-
-  async function refreshThreads() {
-    try {
-      const response = await fetch(`${API_URL}api/Threads?boardId=${boardId}`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        threads = data;
-      } else {
-        console.error("Ошибка получения тредов:", response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error("Ошибка соединения:", error);
-    }
-  }
-
-  async function addThread() {
+  async function addThread(ThreadName, ThreadDescription, ThreadFile) {
     try {
         const formData = new FormData();
-        formData.append('title', newThreadName);
-        formData.append('content', newThreadDescription);
-        if (newThreadFile) {
-            formData.append('file', newThreadFile);
+        formData.append('title', ThreadName);
+        formData.append('content', ThreadDescription);
+        if (ThreadFile) {
+            formData.append('file', ThreadFile);
         }
 
         const response = await fetch(`${API_URL}api/Threads?boardId=${boardId}`, {
@@ -89,9 +51,24 @@
     }
   }
 
+  async function refreshThreads() {
+    try {
+      const response = await fetch(`${API_URL}api/Threads?boardId=${boardId}`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        threads = await response.json();
+      } else {
+        console.error("Ошибка получения тредов:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Ошибка соединения:", error);
+    }
+  }
+
   /**
-  * @param {any} id
-  */
+	 * @param {any} id
+	 */
   async function deleteThread(id) {
     try {
       const response = await fetch(`${API_URL}api/Threads/${id}`, {
@@ -109,10 +86,10 @@
   }
 
   /**
-  * @param {any} id
-  * @param {any} title
-  * @param {any} content
-  */
+	 * @param {any} id
+	 * @param {any} title
+	 * @param {any} content
+	 */
   async function updateThread(id, title, content) {
     try {
       const response = await fetch(`${API_URL}api/Threads/${id}`, {
@@ -136,6 +113,23 @@
       refreshThreads();
     });
   });
+
+
+	async function initializeUser() {
+		try {
+      const response = await fetch(`${API_URL}api/AnonymousUser`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Пользователь инициализирован с UserId: ${data.userId}`);
+      } else {
+        console.error("Ошибка инициализации пользователя:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Ошибка соединения:", error);
+    }
+	}
 </script>
 
 <main class="container mx-auto p-4 bg-white shadow rounded">
@@ -146,34 +140,17 @@
   <p>Два.ч - это система форумов, где можно общаться быстро и свободно...</p>
   <p>Тут расположены посты данной доски</p>
 
-  <div class="mb-4">
-    <input type="text" placeholder="Заголовок треда" bind:value={newThreadName} class="border p-2 mr-2" />
-    <input type="text" placeholder="Описание треда" bind:value={newThreadDescription} class="border p-2 mr-2" />
-    <input type="file" on:change={(e) => newThreadFile = e.target.files[0]} class="border p-2 mr-2" />
-    <button on:click={addThread} class="bg-blue-500 text-white p-2">Добавить тред</button>
-  </div>
+  <ThreadForm 
+    {addThread} 
+  />
 
   {#each threads as thread}
-    <div class="bg-gray-100 p-4 mb-4 rounded shadow">
-      <h2 class="text-xl font-bold mb-2">
-        <a href={`/boards/${boardId}/threads/${thread.threadId}`} class="text-blue-500 underline">{thread.title}</a>
-      </h2>
-      <p class="text-gray-700 mb-4">{thread.content}</p>
-      {#if thread.filePath}
-        <p class="text-sm text-gray-500 mb-4">
-          {#if isImage(thread.filePath)}
-          <img src={getFileUrl(thread.filePath)} alt="Uploaded file" />
-        {:else}
-            <a href={getFileUrl(thread.filePath)} target="_blank" class="text-blue-500 underline">Файл</a>
-        {/if}
-        </p>
-      {/if}
-      <div class="text-sm text-gray-600 mb-4">Автор: {thread.userId}</div>
-      <div class="text-sm text-gray-600 mb-4">Дата: {thread.createdAt}</div>
-      <div class="flex space-x-2">
-        <button on:click={() => updateThread(thread.threadId, thread.title, thread.content)} class="bg-green-500 text-white p-2 rounded">Обновить</button>
-        <button on:click={() => deleteThread(thread.threadId)} class="bg-red-500 text-white p-2 rounded">Удалить</button>
-      </div>
-    </div>
+    <ThreadItem 
+      {thread} 
+      {isImage} 
+      {getFileUrl} 
+      {updateThread} 
+      {deleteThread} 
+    />
   {/each}
 </main>
