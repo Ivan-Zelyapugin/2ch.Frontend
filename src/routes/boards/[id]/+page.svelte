@@ -4,8 +4,8 @@
   import { onMount } from 'svelte';
 
   import { page } from '$app/stores';
-  import ThreadForm from '../../ThreadComponents/ThreadForm.svelte';
-  import ThreadItem from '../../ThreadComponents/ThreadItem.svelte';
+  import ThreadForm from '../../../lib/ThreadComponents/ThreadForm.svelte';
+  import ThreadItem from '../../../lib/ThreadComponents/ThreadItem.svelte';
 
   const baseUrl = 'http://localhost:9000';
   let API_URL = "http://localhost:8080/";

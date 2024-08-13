@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   
-  import BoardForm from './BoardComponents/BoardForm.svelte';
-  import BoardTable from './BoardComponents/BoardTable.svelte';
+  import BoardForm from '../lib/BoardComponents/BoardForm.svelte';
+  import BoardTable from '../lib/BoardComponents/BoardTable.svelte';
 
   /**
 	 * @type {never[]}

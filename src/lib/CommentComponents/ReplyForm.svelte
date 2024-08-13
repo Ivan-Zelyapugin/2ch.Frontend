@@ -1,10 +1,20 @@
 <script>
-    export let replyingToCommentId;
     /**
-	 * @type {any}
+	 * @type {null}
 	 */
-    let ReplyContent;
-    export let addReply;
+     export let replyingToCommentId;
+    let ReplyContent = '';
+    /**
+	 * @type {(arg0: string, arg1: null) => void}
+	 */
+     export let addReply;
+
+    function handleAddReplyComment() {
+        addReply(ReplyContent, replyingToCommentId);
+        ReplyContent = ''; 
+        replyingToCommentId = null;   
+    }
+
 </script>
 
 <div class="ml-8 mt-4">
@@ -16,7 +26,7 @@
     ></textarea>
     <button
         class="mt-2 bg-blue-500 text-white p-2 rounded"
-        on:click={addReply}
+        on:click={handleAddReplyComment}
     >
         Отправить ответ
     </button>

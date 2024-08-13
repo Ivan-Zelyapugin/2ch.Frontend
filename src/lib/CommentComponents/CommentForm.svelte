@@ -4,6 +4,12 @@
     let CommentContent = '';
     let CommentFile = null;
     export let addComment;
+
+    function handleAddComment() {
+        addComment(CommentContent, CommentFile);
+        CommentContent = ''; 
+        CommentFile = null;   
+    }
 </script>
 
 <div class="mt-4">
@@ -20,7 +26,7 @@
     
     <button
         class="mt-2 bg-blue-500 text-white p-2 rounded"
-        on:click={()=>addComment(CommentContent, CommentFile)}
+        on:click={handleAddComment}
     >
         Отправить
     </button>

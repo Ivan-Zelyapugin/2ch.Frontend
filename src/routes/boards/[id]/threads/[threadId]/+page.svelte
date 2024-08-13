@@ -3,16 +3,15 @@
     import {onMount} from 'svelte';
     import { page } from '$app/stores'; 
 
-    import ThreadContent from '../../../../CommentComponents/ThreadContent.svelte';
-    import CommentForm from '../../../../CommentComponents/CommentForm.svelte';
-    import Comment from '..//..//../../CommentComponents/Comment.svelte';
+    import ThreadContent from '../../../../../lib/CommentComponents/ThreadContent.svelte';
+    import CommentForm from '../../../../../lib/CommentComponents/CommentForm.svelte';
+    import Comment from '../../../../../lib/CommentComponents/Comment.svelte';
 
     let name = "2ch app";
     let API_URL = "http://localhost:8080/";
     const baseUrl = 'http://localhost:9000';
   
     let comments = [];
-    let newReplyContent = '';
     let replyingToCommentId = null;
   
     let thread;

@@ -7,17 +7,29 @@
     export let isImage;
     export let getFileUrl;
     export let findReplies;
-    export let addReply;
+    /**
+	 * @type {(arg0: any, arg1: null) => void}
+	 */
+     export let addReply;
+
+    function handleAddReplyComment() {
+        addReply(ReplyContent, replyingToCommentId)
+        ReplyContent = ''; 
+        replyingToCommentId = null;   
+    }
+    
     /**
 	 * @type {null}
 	 */
      export let replyingToCommentId = null;
+
     /**
 	 * @type {any}
 	 */
     let ReplyContent
 
     let newReplyContent = '';
+
     /**
 	 * @param {null} commentId
 	 */
@@ -33,7 +45,7 @@
     </div>
     <p class="text-gray-700 mb-2">
         {#if comment.replyTo}
-            Ответ на комментарий от {comment.replyToUserId}: {comment.content}
+            Ответ на комментарий от {comment.userId}: {comment.content}
         {:else}
             {comment.content}
         {/if}
@@ -78,7 +90,7 @@
             ></textarea>
             <button
                 class="mt-2 bg-blue-500 text-white p-2 rounded"
-                on:click={()=>addReply(ReplyContent, replyingToCommentId)}
+                on:click={handleAddReplyComment}
             >
                 Отправить ответ
             </button>
